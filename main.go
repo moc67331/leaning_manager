@@ -4,6 +4,7 @@ import (
 	"leanmngconcept/repository"
 	"leanmngconcept/viewmodel"
 	"os"
+	"path/filepath"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -33,14 +34,27 @@ func loadResource(name string) []byte {
 	return data
 }
 
+func exeDir() string {
+	exePath, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+	return filepath.Dir(exePath)
+}
+
 func main() {
-	repo := repository.NewActionRepository("actionList.save")
+	exeFileDir := exeDir()
+
+	savePath := exeFileDir + "/" + "actionList.save"
+	logoPath := exeFileDir + "/" + "logo.png"
+
+	repo := repository.NewActionRepository(savePath)
 	viewModel := viewmodel.NewActionViewModel(repo)
 
 	myApp := app.New()
 	myWindow := myApp.NewWindow("Review Manager")
 
-	logo := theme.NewThemedResource(fyne.NewStaticResource("logo.png", loadResource("logo.png")))
+	logo := theme.NewThemedResource(fyne.NewStaticResource("logo.png", loadResource(logoPath)))
 	myApp.SetIcon(logo)
 
 	actionListContainer := container.NewVBox()
